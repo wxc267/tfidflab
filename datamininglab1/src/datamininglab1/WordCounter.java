@@ -101,9 +101,17 @@ public class WordCounter {
 	{
 		return this.docFreq;
 	}
-	public Map<String,Integer> getTFIDFValue()
+	public List<Map<String,Integer>> getTFIDFValue()
 	{
-		Map<String,Integer> result=new HashMap<String,Integer>();
-		return result;
+		List<Map<String,Integer>> tf_idf=new ArrayList<Map<String,Integer>>();
+		for(int i=0;i<rawFeatureVectors.size();i++){
+			Map<String,Integer> counter=rawFeatureVectors.get(i);
+			Map<String,Integer> result=new HashMap<String,Integer>();
+			
+			//calculate tf value
+		
+			//calculate idf value
+		}
+		return tf_idf;
 	}
 }
