@@ -103,15 +103,21 @@ public class WordCounter {
 	}
 	public List<Map<String,Integer>> getTFIDFValue()
 	{
-		List<Map<String,Integer>> tf_idf=new ArrayList<Map<String,Integer>>();
+		List<Map<String,Integer>> tfidfList=new ArrayList<Map<String,Integer>>();
 		for(int i=0;i<rawFeatureVectors.size();i++){
+			int totalWordNumber=docTotalWordNumber.get(i);
 			Map<String,Integer> counter=rawFeatureVectors.get(i);
 			Map<String,Integer> result=new HashMap<String,Integer>();
-			
 			//calculate tf value
-		
+			for(Map.Entry<String, Integer> record : counter.entrySet())
+			{
+				String word=record.getKey();
+				int count=record.getValue();
+				double termFrequency=count*1.0/totalWordNumber;
+				
+			}
 			//calculate idf value
 		}
-		return tf_idf;
+		return tfidfList;
 	}
 }
