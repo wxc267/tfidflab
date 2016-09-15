@@ -1,7 +1,6 @@
 package datamininglab1;
 
 
-import java.util.Map;
 
 public class UtilClass {
 	public static String GetThreeDigitsNumber(int number)
