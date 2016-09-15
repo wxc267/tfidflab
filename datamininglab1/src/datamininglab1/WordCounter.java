@@ -1,7 +1,11 @@
 package datamininglab1;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +89,25 @@ public class WordCounter {
 			rawFeatureVectors.add(counter);
 		}
 	}
+	private Map<String,Double> GetTopThreeWords(Map<String,Double> map)
+	{
+		List<Map.Entry<String,Double>> list =
+	            new LinkedList<Map.Entry<String,Double>>( map.entrySet() );
+	        Collections.sort( list, new Comparator<Map.Entry<String,Double>>()
+	        {
+	            public int compare( Map.Entry<String,Double> o1, Map.Entry<String,Double> o2 )
+	            {
+	                return (o1.getValue()).compareTo( o2.getValue() );
+	            }
+	        } );
+	        Map<String,Double> result=new HashMap<String,Double>();
+	        for(int i=0;i<3;i++)
+	        {
+	        	Map.Entry<String, Double> entry=list.get(list.size()-1-i);
+	        	result.put(entry.getKey(), entry.getValue());
+	        }
+	        return result;
+	}
 	public List<Map<String,Integer>> getRawFeatureVectors()
 	{
 		return this.rawFeatureVectors;
@@ -101,22 +124,27 @@ public class WordCounter {
 	{
 		return this.docFreq;
 	}
-	public List<Map<String,Integer>> getTFIDFValue()
+	public List<Map<String,Double>> getTFIDFValue()
 	{
-		List<Map<String,Integer>> tfidfList=new ArrayList<Map<String,Integer>>();
+		List<Map<String,Double>> tfidfList=new ArrayList<Map<String,Double>>();
 		for(int i=0;i<rawFeatureVectors.size();i++){
 			int totalWordNumber=docTotalWordNumber.get(i);
 			Map<String,Integer> counter=rawFeatureVectors.get(i);
-			Map<String,Integer> result=new HashMap<String,Integer>();
+			Map<String,Double> tfidfDoc=new HashMap<String,Double>();
 			//calculate tf value
 			for(Map.Entry<String, Integer> record : counter.entrySet())
 			{
 				String word=record.getKey();
 				int count=record.getValue();
-				double termFrequency=count*1.0/totalWordNumber;
-				
+				double tf=count*1.0/totalWordNumber;
+				//calculate idf value
+				int wordDocFreq=docFreq.get(word);
+				double idf=Math.log(docTotalNumber*1.0/wordDocFreq);
+				double tfidf=tf*idf;
+				tfidfDoc.put(word, tfidf);
 			}
-			//calculate idf value
+			
+			tfidfList.add(GetTopThreeWords(tfidfDoc));
 		}
 		return tfidfList;
 	}

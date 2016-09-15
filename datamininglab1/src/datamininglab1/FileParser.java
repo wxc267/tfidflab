@@ -53,17 +53,11 @@ public class FileParser {
 				reuterDoc.body=text.text();
 				reuterList.add(reuterDoc);
 			}
-			//System.out.print(reuters.size());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}  
         return reuterList;
 	}
-	public static void main(String[] args)
-	{
-		String fileName="./data/reut2-000.sgm";
-		parse(fileName);
-		
-	}
+
 }
