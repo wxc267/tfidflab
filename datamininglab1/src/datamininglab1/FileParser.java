@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 
 public class FileParser {
+	
 	public static List<ReuterDoc> parse(String fileName)
 	{
 		List<ReuterDoc> reuterList=new ArrayList<ReuterDoc>();

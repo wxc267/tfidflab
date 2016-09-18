@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class WordCounter {
+	private static int TOP_SIZE=3;
+	private static int MIN_FREQ=5;
+	private Set<String> wordsSet;
 	private List<ReuterDoc> reuterList;
 	private Map<String,Integer> docFreq;
 	private int docTotalNumber;
@@ -18,6 +23,7 @@ public class WordCounter {
 	{
 		this.reuterList=new ArrayList<ReuterDoc>();
 		this.reuterList=reuterList;
+		wordsSet=new HashSet<String>();
 		docFreq=new HashMap<String,Integer>();
 		docTotalWordNumber=new ArrayList<Integer>();
 		rawFeatureVectors=new ArrayList<Map<String,Integer>>();
@@ -25,6 +31,7 @@ public class WordCounter {
 	}
 	private Map<String,Integer> WordCounterEachText(String text)
 	{
+		StopWords stopWords=new StopWords();
 		Map<String,Integer> counter=new HashMap<String,Integer>();
 		int totalNum=0;
 		int start=0;
@@ -42,11 +49,14 @@ public class WordCounter {
 			{
 				/*
 				if the begin of index of the string is character but the current index is non-character, then take
-				the word.
+				the word. If the word is not stopwords, then 
 				*/
 				String word=text.substring(start,end);
 				word=word.toLowerCase();
 				totalNum++;
+				if(!stopWords.stopWords.contains(word))
+				{
+					/*if it is not stop word, then put into the vector*/
 					if(counter.containsKey(word))
 					{
 						int oldCount=counter.get(word);
@@ -65,6 +75,7 @@ public class WordCounter {
 							docFreq.put(word, 1);
 						}
 					}
+				}
 				start=end+1;
 				end=start;
 			}
@@ -88,10 +99,10 @@ public class WordCounter {
 			rawFeatureVectors.add(counter);
 		}
 	}
-	private Map<String,Double> GetTopThreeWords(Map<String,Double> map)
+	private Map<String,Double> GetTopThreeWords(Map<String,Double> tfidf)
 	{
 		List<Map.Entry<String,Double>> list =
-	            new LinkedList<Map.Entry<String,Double>>( map.entrySet() );
+	            new LinkedList<Map.Entry<String,Double>>( tfidf.entrySet() );
 	        Collections.sort( list, new Comparator<Map.Entry<String,Double>>()
 	        {
 	            public int compare( Map.Entry<String,Double> o1, Map.Entry<String,Double> o2 )
@@ -100,10 +111,15 @@ public class WordCounter {
 	            }
 	        } );
 	        Map<String,Double> result=new HashMap<String,Double>();
-	        for(int i=0;i<3;i++)
+	        int top_n=0;
+	        for(int i=0;i<list.size()-1&&top_n<TOP_SIZE;i++)
 	        {
 	        	Map.Entry<String, Double> entry=list.get(list.size()-1-i);
-	        	result.put(entry.getKey(), entry.getValue());
+	        	if(docFreq.get(entry.getKey())>MIN_FREQ){
+	        		result.put(entry.getKey(), entry.getValue());
+	        		wordsSet.add(entry.getKey());
+	        		top_n++;
+	        	}
 	        }
 	        return result;
 	}
@@ -122,6 +138,10 @@ public class WordCounter {
 	public Map<String,Integer> getDocumentFrequency()
 	{
 		return this.docFreq;
+	}
+	public List<String> getTopWordsList()
+	{
+		return new ArrayList<String>(this.wordsSet);
 	}
 	public List<Map<String,Double>> getTFIDFValue()
 	{
