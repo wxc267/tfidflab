@@ -2,6 +2,7 @@ package datamininglab1;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,6 @@ public class MainClass {
 		String firstColumnFormat="<tr><td>%s</td>\n";
 		String format="<td>%s</td>\n";
 		String lastColumnFormat="<td>%s</td></tr>\n";
-		List<Map<String,Double>> result=wordCounter.getTFIDFValue();
 		List<Map<String,Integer>> countList=wordCounter.getRawFeatureVectors();
 		List<String> wordsList=wordCounter.getTopWordsList();
 		countWriter.write(begin);
@@ -67,9 +67,12 @@ public class MainClass {
 	
 	public static void main(String[] args) throws IOException
 	{
-		
-		String fileName="./data/reut2-000.sgm";
-		List<ReuterDoc> reuterList=FileParser.parse(fileName);
+		List<ReuterDoc> reuterList=new ArrayList<ReuterDoc>();
+		for(int i=0;i<22;i++){
+			String fileName="./data/reut2-"+UtilClass.GetThreeDigitsNumber(i)+".sgm";
+			List<ReuterDoc> reuters=FileParser.parse(fileName);
+			reuterList.addAll(reuters);
+		}
 		WordCounter word=new WordCounter(reuterList);
 		printResult(word,reuterList);	
 	}

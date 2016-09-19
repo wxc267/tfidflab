@@ -11,8 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class WordCounter {
-	private static int TOP_SIZE=3;
-	private static int MIN_FREQ=5;
+	private static int MIN_FREQ=2000;
 	private Set<String> wordsSet;
 	private List<ReuterDoc> reuterList;
 	private Map<String,Integer> docFreq;
@@ -99,26 +98,18 @@ public class WordCounter {
 			rawFeatureVectors.add(counter);
 		}
 	}
-	private Map<String,Double> GetTopThreeWords(Map<String,Double> tfidf)
+	private Map<String,Double> GetMostCommonWords(Map<String,Double> tfidf)
 	{
 		List<Map.Entry<String,Double>> list =
 	            new LinkedList<Map.Entry<String,Double>>( tfidf.entrySet() );
-	        Collections.sort( list, new Comparator<Map.Entry<String,Double>>()
-	        {
-	            public int compare( Map.Entry<String,Double> o1, Map.Entry<String,Double> o2 )
-	            {
-	                return (o1.getValue()).compareTo( o2.getValue() );
-	            }
-	        } );
 	        Map<String,Double> result=new HashMap<String,Double>();
-	        int top_n=0;
-	        for(int i=0;i<list.size()-1&&top_n<TOP_SIZE;i++)
+	        
+	        for(int i=0;i<list.size()-1;i++)
 	        {
-	        	Map.Entry<String, Double> entry=list.get(list.size()-1-i);
+	        	Map.Entry<String, Double> entry=list.get(i);
 	        	if(docFreq.get(entry.getKey())>MIN_FREQ){
 	        		result.put(entry.getKey(), entry.getValue());
 	        		wordsSet.add(entry.getKey());
-	        		top_n++;
 	        	}
 	        }
 	        return result;
@@ -163,7 +154,7 @@ public class WordCounter {
 				tfidfDoc.put(word, tfidf);
 			}
 			
-			tfidfList.add(GetTopThreeWords(tfidfDoc));
+			tfidfList.add(GetMostCommonWords(tfidfDoc));
 		}
 		return tfidfList;
 	}
